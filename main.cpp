@@ -2,15 +2,20 @@
 #include <string.h>
 #include <fstream>
 #include <vector>
+#include <iomanip>
 using namespace std;
 
 // TOKENS			Example Lexemes
-//
-// KEYWORDS 	=	int, float, bool, True, False, if, else, then, endif, endelse, while, whileend, do, enddo, for, endfor, STDinput, STDoutput, and, or, not
-// IDENTIFIERS 	=	legal identifiers must start with alphabetic character follow by digits, letters, underscore or $
-// SEPARATORS 	=	(){}[],.:;
-// OPERATORS 	=	*+-=/><%
-//
+vector<string> KEYWORDS 	=	{"int", "float", "bool", "True", "False", "if", "else", "then", "endif", "endelse", "while", "whileend", "do", "enddo", "for", "endfor", "STDinput", "STDoutput", "and", "or", "not"};
+char separators[] = "'(){}[],:;";
+char operators[] = {'*', '+', '-', '=', '/', '>', '<', '%'};
+
+//Globals
+bool commentFlag = false;
+bool separatorFlag = false;
+string buffer;
+
+//IDENTIFIERS 	=	legal identifiers must start with alphabetic character follow by digits, letters, underscore or $
 // Additional examples and symbols:
 // Valid IDENTIFIERS	:  	num, num1, large$, num$1, num2, num2$, a9, ab, ab2, my_num, Max_Num, etc...
 // Valid Numbers		:	integers whole numbers (0,1,2,3,...9) and reals or floats (5.0, 0.9, 1.75, ...)
@@ -25,25 +30,69 @@ using namespace std;
 */
 
 //Lexical Analysis function
-void lexer(char ch){
-//TO DO - figures out what the character is, and assesses it
+void lexer(char symbol){
+  if(symbol == '!'){
+    if(commentFlag){
+      commentFlag = false;
+    }
+    else{
+      commentFlag = true;
+    }
+  }
+  if(!commentFlag){
+    //Checks separators
+    for(int i = 0; i < 10; i++){
+      if(symbol == separators[i]){
+        separatorFlag = true;
+      }
+    }
+    //Check Operators
+    for(int i = 0; i < 7; i++){
+      if(symbol == operators[i]){
+        cout << left << setw(20) << "OPERATOR" << setw(15) << '=' << right << symbol << endl;
+      }
+    }
+
+    //Add symbol to buffer if not operator or separator
+    if(isalnum(symbol) || symbol == '$' || symbol == '_'){
+      buffer.push_back(symbol);
+    }
+
+    //Check for Keywords
+    for(vector<string>::iterator iter = KEYWORDS.begin(); iter < KEYWORDS.end(); iter++){
+      if(buffer.compare(*iter) == 0){
+        cout << left << setw(20) << "KEYWORD" << setw(15) << '=' << right << buffer << endl;
+        buffer.clear();
+      }
+    }
+    //Output if end of identifier
+    if((symbol == ' ' || separatorFlag) && buffer.size() > 2){
+      cout << left << setw(20) << "IDENTIFIER" << setw(15) << '=' << right << buffer << endl;
+      buffer.clear();
+    }
+    //Separator output here for formatting
+    if(separatorFlag){
+      separatorFlag = false;
+      cout << left << setw(20) << "SEPARATOR" << setw(15) << '=' << right << symbol << endl;
+    }
+  }
 }
 
 //Main function to iterate through file
 int main(){
-  ifstream file;
+  ifstream fin;
   char ch;
 
-  file.open("input.txt");
-  if(!file.is_open()){ cout << "File Opening Error\n"; exit(1);}
+  fin.open("input.txt");
+  if(!fin.is_open()){ cout << "File Opening Error\n"; exit(1);}
 
-  if(file.is_open()){
-    while(!file.eof()){
-      ch = file.get();
-      cout << ch;
-      //lexer(ch);
+  if(fin.is_open()){
+    cout << setw(10) << "Token:" << setw(32) << "Lexeme:\n\n";
+    while(!fin.eof()){
+      ch = fin.get();
+      lexer(ch);
     }
-    file.close();
   }
+  fin.close();
   return 0;
 }
