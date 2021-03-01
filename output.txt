@@ -1,0 +1,18 @@
+    Token:                       Lexeme:
+
+KEYWORD             =              int
+IDENTIFIER          =              counter
+SEPARATOR           =              ;
+KEYWORD             =              while
+SEPARATOR           =              (
+IDENTIFIER          =              counter
+OPERATOR            =              <
+IDENTIFIER          =              100
+SEPARATOR           =              )
+SEPARATOR           =              {
+IDENTIFIER          =              counter
+OPERATOR            =              =
+IDENTIFIER          =              counter
+OPERATOR            =              +
+SEPARATOR           =              ;
+SEPARATOR           =              }

@@ -1,0 +1,7 @@
+! Add two integers and return total as float!
+float total;
+int num1, num2;
+
+total = num1 + num2;
+
+return sum;

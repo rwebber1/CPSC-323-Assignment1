@@ -6,4 +6,4 @@ main.o:
 	g++ -c main.cpp -o main.o
 
 clean:
-	rm main
+	rm main output.txt

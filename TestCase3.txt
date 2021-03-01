@@ -1,0 +1,6 @@
+! Counter through loop !
+int counter;
+while(counter < 100)
+{
+     counter = counter + 1;
+}

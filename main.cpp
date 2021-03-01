@@ -30,7 +30,7 @@ string buffer;
 */
 
 //Lexical Analysis function
-void lexer(char symbol){
+void lexer(char symbol, ofstream &fout){
   if(symbol == '!'){
     if(commentFlag){
       commentFlag = false;
@@ -49,7 +49,7 @@ void lexer(char symbol){
     //Check Operators
     for(int i = 0; i < 7; i++){
       if(symbol == operators[i]){
-        cout << left << setw(20) << "OPERATOR" << setw(15) << '=' << right << symbol << endl;
+        fout << left << setw(20) << "OPERATOR" << setw(15) << '=' << right << symbol << endl;
       }
     }
 
@@ -61,38 +61,52 @@ void lexer(char symbol){
     //Check for Keywords
     for(vector<string>::iterator iter = KEYWORDS.begin(); iter < KEYWORDS.end(); iter++){
       if(buffer.compare(*iter) == 0){
-        cout << left << setw(20) << "KEYWORD" << setw(15) << '=' << right << buffer << endl;
+        fout << left << setw(20) << "KEYWORD" << setw(15) << '=' << right << buffer << endl;
         buffer.clear();
       }
     }
     //Output if end of identifier
     if((symbol == ' ' || separatorFlag) && buffer.size() > 2){
-      cout << left << setw(20) << "IDENTIFIER" << setw(15) << '=' << right << buffer << endl;
+      fout << left << setw(20) << "IDENTIFIER" << setw(15) << '=' << right << buffer << endl;
       buffer.clear();
     }
     //Separator output here for formatting
     if(separatorFlag){
       separatorFlag = false;
-      cout << left << setw(20) << "SEPARATOR" << setw(15) << '=' << right << symbol << endl;
+      fout << left << setw(20) << "SEPARATOR" << setw(15) << '=' << right << symbol << endl;
     }
   }
 }
 
 //Main function to iterate through file
-int main(){
+int main(int argc, char *argv[]){
+  string input;
   ifstream fin;
+  ofstream fout;
   char ch;
 
-  fin.open("input.txt");
+  //Checks if input file was sent in
+  if(argc < 2){ cout << "ERROR - format should be: ./main inputFile\n"; exit(1);}
+  else{
+    input = argv[1];
+  }
+
+  //Error checking for input file
+  fin.open(input);
   if(!fin.is_open()){ cout << "File Opening Error\n"; exit(1);}
 
+  //Error checking for output file
+  fout.open("output.txt");
+  if(!fout.is_open()){ cout << "Output File Error\n"; exit(1);}
+
   if(fin.is_open()){
-    cout << setw(10) << "Token:" << setw(32) << "Lexeme:\n\n";
+    fout << setw(10) << "Token:" << setw(32) << "Lexeme:\n\n";
     while(!fin.eof()){
       ch = fin.get();
-      lexer(ch);
+      lexer(ch, fout);
     }
   }
   fin.close();
+  fout.close();
   return 0;
 }
