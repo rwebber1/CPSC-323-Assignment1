@@ -13,6 +13,7 @@ char operators[] = {'*', '+', '-', '=', '/', '>', '<', '%'};
 //Globals
 bool commentFlag = false;
 bool separatorFlag = false;
+bool operatorFlag = false;
 string buffer;
 
 //IDENTIFIERS 	=	legal identifiers must start with alphabetic character follow by digits, letters, underscore or $
@@ -49,7 +50,7 @@ void lexer(char symbol, ofstream &fout){
     //Check Operators
     for(int i = 0; i < 7; i++){
       if(symbol == operators[i]){
-        fout << left << setw(20) << "OPERATOR" << setw(15) << '=' << right << symbol << endl;
+        operatorFlag = true;
       }
     }
 
@@ -66,15 +67,21 @@ void lexer(char symbol, ofstream &fout){
       }
     }
     //Output if end of identifier
-    if((symbol == ' ' || separatorFlag) && buffer.size() > 2){
-      fout << left << setw(20) << "IDENTIFIER" << setw(15) << '=' << right << buffer << endl;
-      buffer.clear();
+    if(symbol == ' ' || separatorFlag || operatorFlag){
+      if(buffer.size() != 0){
+        fout << left << setw(20) << "IDENTIFIER" << setw(15) << '=' << right << buffer << endl;
+        buffer.clear();
+      }
+      if(separatorFlag){
+        fout << left << setw(20) << "SEPARATOR" << setw(15) << '=' << right << symbol << endl;
+        separatorFlag = false;
+      }
+      if(operatorFlag){
+        fout << left << setw(20) << "OPERATOR" << setw(15) << '=' << right << symbol << endl;
+        operatorFlag = false;
+      }
     }
-    //Separator output here for formatting
-    if(separatorFlag){
-      separatorFlag = false;
-      fout << left << setw(20) << "SEPARATOR" << setw(15) << '=' << right << symbol << endl;
-    }
+
   }
 }
 

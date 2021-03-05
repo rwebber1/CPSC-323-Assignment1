@@ -14,5 +14,6 @@ IDENTIFIER          =              counter
 OPERATOR            =              =
 IDENTIFIER          =              counter
 OPERATOR            =              +
+IDENTIFIER          =              1
 SEPARATOR           =              ;
 SEPARATOR           =              }
